@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                bat 'mvnd -B -DskipTests clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                bat 'mvnd test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage('Deliver') {
+            steps {
+                bat 'bash ./jenkins/scripts/deliver.sh'
+            }
+        }
+        stage('Complete') {
+            steps {
+                echo 'finally, Job Complete from new jenkins file!'
+            }
+        }
+    }
+}
